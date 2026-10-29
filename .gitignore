@@ -1,0 +1,25 @@
+# Java / Maven
+**/target/
+*.class
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+**/application-local.properties
+
+# IDE and OS files
+.idea/
+.vscode/*
+!.vscode/tasks.json
+.DS_Store
+Thumbs.db
+
+# Logs and generated modernization session data
+*.log
+.github/modernize/
+backend/.github/
