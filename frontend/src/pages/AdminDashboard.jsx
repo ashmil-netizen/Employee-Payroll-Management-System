@@ -45,8 +45,16 @@ function AdminDashboard() {
       .catch((requestError) => setError(requestError.message));
   }, []);
 
-  const presentToday = todayAttendance.filter((record) => record.status === 'PRESENT').length;
-  const absentToday = todayAttendance.filter((record) => record.status === 'ABSENT').length;
+  const availabilityByEmployee = todayAttendance.reduce((availability, record) => {
+    const currentRecord = availability[record.employeeId];
+    if (!currentRecord || record.attendanceId > currentRecord.attendanceId) {
+      availability[record.employeeId] = record;
+    }
+    return availability;
+  }, {});
+  const todaysStatuses = Object.values(availabilityByEmployee);
+  const availableToday = todaysStatuses.filter((record) => record.status === 'AVAILABLE').length;
+  const unavailableToday = todaysStatuses.filter((record) => record.status === 'UNAVAILABLE').length;
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -95,6 +103,7 @@ function AdminDashboard() {
         <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600">Admin</p>
           <h1 className="mt-2 text-3xl font-bold text-slate-900">Good Morning, Admin</h1>
+          <p className="mt-2 text-sm text-slate-500">People operations <span className="mx-2 text-indigo-400">/</span> Today at a glance</p>
           {error && <p role="alert" className="mt-3 text-sm text-red-700">{error}</p>}
           <Link to="/leave-management" className="mt-4 inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">
             Review leave requests
@@ -107,12 +116,12 @@ function AdminDashboard() {
             <p className="mt-2 text-3xl font-bold text-slate-900">{employees.length}</p>
           </div>
           <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-            <p className="text-sm text-slate-500">Present Today</p>
-            <p className="mt-2 text-3xl font-bold text-emerald-600">{presentToday}</p>
+            <p className="text-sm text-slate-500">Available Today</p>
+            <p className="mt-2 text-3xl font-bold text-emerald-600">{availableToday}</p>
           </div>
           <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
-            <p className="text-sm text-slate-500">Absent Today</p>
-            <p className="mt-2 text-3xl font-bold text-red-500">{absentToday}</p>
+            <p className="text-sm text-slate-500">Unavailable Today</p>
+            <p className="mt-2 text-3xl font-bold text-red-500">{unavailableToday}</p>
           </div>
         </div>
 
@@ -200,7 +209,7 @@ function AdminDashboard() {
         <section className="mt-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
           <h2 className="text-xl font-bold text-slate-900">Employees</h2>
           <div className="mt-4 overflow-x-auto">
-            <table className="min-w-[1050px] w-full text-left text-sm">
+            <table className="min-w-[1150px] w-full text-left text-sm">
               <thead className="border-b border-slate-200 text-slate-500">
                 <tr>
                   <th className="px-3 py-3">ID</th>
@@ -214,6 +223,7 @@ function AdminDashboard() {
                   <th className="px-3 py-3">Bonus</th>
                   <th className="px-3 py-3">Deductions</th>
                   <th className="px-3 py-3">Action</th>
+                  <th className="px-3 py-3">Availability</th>
                 </tr>
               </thead>
               <tbody>
@@ -238,10 +248,17 @@ function AdminDashboard() {
                     <td className="px-3 py-3">
                       <button onClick={() => handleRemoveEmployee(employee)} className="font-semibold text-red-700 hover:text-red-900">Remove</button>
                     </td>
+                    <td className="px-3 py-3">
+                      {availabilityByEmployee[employee.employeeId]?.status === 'AVAILABLE'
+                        ? <span className="font-semibold text-emerald-700">Available</span>
+                        : availabilityByEmployee[employee.employeeId]?.status === 'UNAVAILABLE'
+                          ? <span className="font-semibold text-red-700">Unavailable</span>
+                          : <span className="text-slate-500">Not set</span>}
+                    </td>
                   </tr>
                 ))}
                 {employees.length === 0 && (
-                  <tr><td colSpan="11" className="px-3 py-8 text-center text-slate-500">No employees found.</td></tr>
+                  <tr><td colSpan="12" className="px-3 py-8 text-center text-slate-500">No employees found.</td></tr>
                 )}
               </tbody>
             </table>

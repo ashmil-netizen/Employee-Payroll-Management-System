@@ -40,8 +40,10 @@ function Login() {
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg ring-1 ring-slate-200">
         <div className="mb-6 text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600">Payroll System</p>
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-lg font-black text-white shadow-lg shadow-indigo-950/40">P</div>
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600">People · Pay · Presence</p>
           <h1 className="mt-2 text-3xl font-bold text-slate-900">Login</h1>
+          <p className="mt-2 text-sm text-slate-500">Your workforce, in focus.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">

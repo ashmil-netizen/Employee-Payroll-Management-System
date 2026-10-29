@@ -3,7 +3,7 @@ import { getAttendanceByEmployeeId, getLeaveRequests, submitLeaveRequest } from 
 
 function EmployeeAttendance() {
   const employee = JSON.parse(localStorage.getItem('payrollUser') || '{}');
-  const [attendance, setAttendance] = useState({ present: 0, absent: 0, percentage: 0 });
+  const [attendance, setAttendance] = useState({ available: 0, unavailable: 0, percentage: 0 });
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [form, setForm] = useState({
     leaveType: 'Paid Leave',
@@ -59,15 +59,15 @@ function EmployeeAttendance() {
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-indigo-600">Attendance</p>
-          <h1 className="mt-2 text-3xl font-bold text-slate-900">Attendance Percentage</h1>
+          <h1 className="mt-2 text-3xl font-bold text-slate-900">Availability Percentage</h1>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.1fr_1.5fr]">
           <div className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-slate-200">
             <div className="text-5xl font-bold text-slate-900">{Number(attendance.percentage).toFixed(1)}%</div>
             <div className="mt-6 space-y-3 text-slate-700">
-              <p><span className="font-semibold">Present:</span> {attendance.present}</p>
-              <p><span className="font-semibold">Absent:</span> {attendance.absent}</p>
+              <p><span className="font-semibold">Available:</span> {attendance.available}</p>
+              <p><span className="font-semibold">Unavailable:</span> {attendance.unavailable}</p>
             </div>
             <h2 className="mt-6 font-semibold text-slate-900">My leave requests</h2>
             {leaveRequests.length === 0 ? (

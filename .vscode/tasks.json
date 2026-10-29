@@ -4,12 +4,7 @@
 		{
 			"label": "Run payroll backend",
 			"type": "shell",
-			"command": "mvn",
-			"args": [
-				"-f",
-				"backend\\pom.xml",
-				"spring-boot:run"
-			],
+			"command": "$maven = Get-ChildItem \"$env:USERPROFILE\\.maven\" -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending | ForEach-Object { Join-Path $_.FullName 'bin\\mvn.cmd' } | Where-Object { Test-Path $_ } | Select-Object -First 1; if ($maven) { & $maven -f backend\\pom.xml spring-boot:run } else { mvn -f backend\\pom.xml spring-boot:run }",
 			"isBackground": true,
 			"problemMatcher": []
 		},

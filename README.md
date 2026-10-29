@@ -7,8 +7,10 @@ A full-stack payroll management project with a React web interface and a Spring 
 ## Features
 
 - Login screens for an administrator and employees.
+- Dark and light themes with the selected appearance saved in the browser.
 - Admin dashboard to view employees and attendance, add employees, and review leave requests.
 - Employee dashboard to view payroll information, record attendance, and submit leave requests.
+- Availability tracking with available/unavailable status options.
 - Employee types for full-time, part-time, and contract staff.
 - REST API backed by Spring Data JPA.
 - H2 in-memory database for a quick local start, with optional PostgreSQL configuration.

@@ -1,6 +1,7 @@
 package com.oops.payroll.service;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +30,12 @@ public class AttendanceService {
                         throw new IllegalArgumentException("Employee not found.");
                 }
 
-                Attendance attendance = new Attendance();
+                LocalDate today = LocalDate.now();
+                Attendance attendance = attendanceRepository
+                                .findFirstByEmployeeIdAndDateOrderByAttendanceIdDesc(employeeId, today)
+                                .orElseGet(Attendance::new);
                 attendance.setEmployeeId(employeeId);
-                attendance.setDate(LocalDate.now());
+                attendance.setDate(today);
                 attendance.setStatus(status);
                 return attendanceRepository.save(attendance);
     }
@@ -39,21 +43,31 @@ public class AttendanceService {
     public Map<String, Object> getAttendanceSummary(int employeeId) {
                 List<Attendance> employeeAttendance = attendanceRepository.findAllByEmployeeId(employeeId);
 
-        long present = employeeAttendance.stream()
-                .filter(record -> "PRESENT".equals(record.getStatus()))
+        Map<LocalDate, Attendance> latestByDate = new HashMap<>();
+        for (Attendance record : employeeAttendance) {
+                latestByDate.merge(record.getDate(), record,
+                                (existing, candidate) -> candidate.getAttendanceId() > existing.getAttendanceId()
+                                                ? candidate : existing);
+        }
+
+        long available = latestByDate.values().stream()
+                .filter(record -> "AVAILABLE".equals(record.getStatus()))
                 .count();
 
-        long absent = employeeAttendance.stream()
-                .filter(record -> "ABSENT".equals(record.getStatus()))
+        long unavailable = latestByDate.values().stream()
+                .filter(record -> "UNAVAILABLE".equals(record.getStatus()))
                 .count();
 
-        int total = (int) (present + absent);
-        double percentage = total == 0 ? 0 : (present * 100.0) / total;
+        int total = (int) (available + unavailable);
+        double percentage = total == 0 ? 0 : (available * 100.0) / total;
+        Attendance todayRecord = latestByDate.get(LocalDate.now());
+        String currentStatus = todayRecord == null ? "NOT_SET" : todayRecord.getStatus();
 
         return Map.of(
-                "present", present,
-                "absent", absent,
-                "percentage", percentage
+                "available", available,
+                "unavailable", unavailable,
+                "percentage", percentage,
+                "currentStatus", currentStatus == null ? "NOT_SET" : currentStatus
         );
     }
 

@@ -75,8 +75,8 @@ public class Attendance {
             throw new IllegalArgumentException("Attendance status cannot be empty.");
         }
         String normalized = status.trim().toUpperCase();
-        if (!"PRESENT".equals(normalized) && !"ABSENT".equals(normalized)) {
-            throw new IllegalArgumentException("Status must be PRESENT or ABSENT.");
+        if (!"AVAILABLE".equals(normalized) && !"UNAVAILABLE".equals(normalized)) {
+            throw new IllegalArgumentException("Status must be AVAILABLE or UNAVAILABLE.");
         }
         this.status = normalized;
     }
